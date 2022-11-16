@@ -17,6 +17,14 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "oayanda_prisubnet_${count.index + 1}"
 
+  }
+}
+
 ```
 
 ![private subnet](/images/private.png)
+![private subnet](/images/p2.png)
+
+Dynamic Tagging of  Resources
+
+
