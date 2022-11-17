@@ -284,4 +284,5 @@ This is where, we will be attaching the policy which we created above, to the ro
     }
 
 ```
+
  ![variables](/images/role.png)
