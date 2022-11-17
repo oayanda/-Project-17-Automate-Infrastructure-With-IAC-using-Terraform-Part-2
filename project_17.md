@@ -25,7 +25,7 @@ resource "aws_subnet" "private" {
 ![private subnet](/images/private.png)
 ![private subnet](/images/p2.png)
 
-Dynamic Tagging of  Resources
+## Dynamic Tagging of  Resources
 Tags or tagging are very important because it enables the effective management or investigate any aspect of AWS environment.
 
 Create two variables `name` and `tags` in the variable.tf file.
@@ -74,9 +74,63 @@ tags = merge(
     }
   )
   ```
+From the above snippet, `var.name` becomes the prefix and `count.index` which is loop becomes the suffix for each iteration.
 
   ![variables](/images/pu.png)
 
 Let's run `terraform plan` to see the effect
 
  ![variables](/images/t.png)
+
+## Internet Gateway
+
+To create the internet gateway, declare the `aws_internet_gateway` and declare the `vcp_id` which makes sure the internet gateway is attached automatically.
+
+```bash
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+
+  tags = merge(
+    var.tags,
+    {
+      Name = format("%s-%s", aws_vpc.main.id,"IGW")
+    } 
+  )
+}
+```
+
+ ![variables](/images/igw.png)
+
+ ## Create 1 NAT Gateways and 1 Elastic IP (EIP) addresses
+
+```bash
+# Elastic IP
+
+resource "aws_eip" "nat_eip" {
+  vpc        = true
+  depends_on = [aws_internet_gateway.ig]
+
+  tags = merge(
+    var.tags,
+    {
+      Name = format("%s-EIP", var.name)
+    },
+  )
+}
+
+# Nat gateway and elastic Ip attachement
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = element(aws_subnet.public.*.id, 0)
+  depends_on    = [aws_internet_gateway.ig]
+
+  tags = merge(
+    var.tags,
+    {
+      Name = format("%s-Nat", var.name)
+    },
+  )
+}
+```
+
+
