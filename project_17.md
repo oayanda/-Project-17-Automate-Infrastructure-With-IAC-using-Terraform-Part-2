@@ -78,7 +78,7 @@ From the above snippet, `var.name` becomes the prefix and `count.index` which is
 
   ![variables](/images/pu.png)
 
-Let's run `terraform plan` to see the effect
+Let's run `terraform plan` to see this in effect
 
  ![variables](/images/t.png)
 
@@ -103,12 +103,17 @@ resource "aws_internet_gateway" "igw" {
 
  ## Create 1 NAT Gateways and 1 Elastic IP (EIP) addresses
 
+The Nat gateway needs to be in a public subnet in order for it enable the private subnets communicate with public. 
+
+Using the `element function` helps retrieves a single element from a list of public subnets which are configured dynamically.
+element(aws_subnet.public.*.id, 0) - where 0 is the first index
+
 ```bash
 # Elastic IP
 
 resource "aws_eip" "nat_eip" {
   vpc        = true
-  depends_on = [aws_internet_gateway.ig]
+  depends_on = [aws_internet_gateway.igw]
 
   tags = merge(
     var.tags,
@@ -122,7 +127,7 @@ resource "aws_eip" "nat_eip" {
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = element(aws_subnet.public.*.id, 0)
-  depends_on    = [aws_internet_gateway.ig]
+  depends_on    = [aws_internet_gateway.igw]
 
   tags = merge(
     var.tags,
@@ -133,4 +138,5 @@ resource "aws_nat_gateway" "nat" {
 }
 ```
 
+## AWS ROUTES
 
