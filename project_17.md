@@ -26,5 +26,57 @@ resource "aws_subnet" "private" {
 ![private subnet](/images/p2.png)
 
 Dynamic Tagging of  Resources
+Tags or tagging are very important because it enables the effective management or investigate any aspect of AWS environment.
 
+Create two variables `name` and `tags` in the variable.tf file.
 
+```bash
+variable "name" {
+  type = string
+  default = "oayanda"
+  
+}
+
+variable "tags" {
+  description = "A mapping of tags to assign to all resources."
+  type        = map(string)
+  default     = {}
+}
+```
+
+![variables](/images/var.png)
+
+ Assign values for the `tags` variable in the `terraform.tfvars` file
+
+```bash
+tags = {
+  Enviroment      = "production" 
+  Owner-Email     = "oayanda@oayanda.com"
+  Managed-By      = "Terraform"
+  Billing-Account = "1234567890"
+}
+```
+
+![variables](/images/tags.png)
+
+Instantiate the `tags` in the Public and Private subnet blocks of the `main.tf` file. The `tags` here is an argument which make use another variable called `tags`.
+
+`Merge()` takes an arbitrary number of maps or objects, and returns a single map or object that contains a merged set of elements from all arguments.
+We use `merge funtion` to combine two of the variables listed eariler and a `format function` to display the dynamic tag accordingly for the subnet resource or any other resources.
+
+The `format function` produces a string by formatting a number of other values according to a specification string.
+
+```bash
+tags = merge(
+    var.tags,
+    {
+      Name = format("%s-PublicSub-%s", var.name, count.index)
+    }
+  )
+  ```
+
+  ![variables](/images/pu.png)
+
+Let's run `terraform plan` to see the effect
+
+ ![variables](/images/t.png)
