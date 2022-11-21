@@ -1112,4 +1112,5 @@ resource "aws_db_instance" "oayanda-rds" {
   multi_az               = "true"
 }
 ```
+
 ![variables](/images/rds.png)
