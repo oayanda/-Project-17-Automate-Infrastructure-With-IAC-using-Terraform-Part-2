@@ -26,7 +26,8 @@ resource "aws_subnet" "private" {
 ![private subnet](/images/p2.png)
 
 ## Dynamic Tagging of  Resources
-Tags or tagging are very important because it enables the effective management or investigate any aspect of AWS environment.
+
+Tags or tagging are very important because it enables the effective management any aspect of provisioned AWS resource.
 
 Create two variables `name` and `tags` in the variable.tf file.
 
