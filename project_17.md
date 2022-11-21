@@ -75,7 +75,7 @@ tags = merge(
     }
   )
   ```
-From the above snippet, `var.name` becomes the prefix and `count.index` which is loop becomes the suffix for each iteration.
+From the above snippet, `var.name` becomes the prefix and `count.index` which is a loop becomes the suffix for each iteration.
 
   ![variables](/images/pu.png)
 
