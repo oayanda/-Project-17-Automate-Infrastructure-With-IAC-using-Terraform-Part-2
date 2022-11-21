@@ -587,3 +587,12 @@ resource "aws_route53_record" "wordpress" {
 ### Create an external (Internet facing) Application Load Balancer (ALB)
 
 ### CREATING AUSTOALING GROUPS
+
+Now we need to configure our ASG to be able to scale the EC2s out and in depending on the application traffic.
+
+Before we start configuring an ASG, we need to create the launch template and the the AMI needed. For now we are going to use a random AMI from AWS
+
+Based on our Architetcture we need for Auto Scaling Groups for bastion, nginx, wordpress and tooling, so we will create two files namely: `asg-bastion-nginx.tf` will contain Launch Template and Austoscaling froup for Bastion and Nginx, then `asg-wordpress-tooling.tf` will contain Launch Template and Austoscaling group for wordpress and tooling
+
+
+### STORAGE AND DATABASE
