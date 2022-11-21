@@ -1,6 +1,6 @@
 # Automating AWS Infrastructure with Terraform
 
-The VPC and the 2 required public subnets were created in the previous project.
+The VPC and the 2 required public subnets were created in the [previous project](https://github.com/oayanda/Automate-Infrastructure-With-IAC-using-Terraform-Part-1).
 Let's continue by creating the required 4 private subnets
 
 ## Create 4 Private Subnets
