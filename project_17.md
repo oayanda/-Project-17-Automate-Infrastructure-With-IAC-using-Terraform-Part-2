@@ -1116,3 +1116,5 @@ resource "aws_db_instance" "oayanda-rds" {
 ```
 
 ![variables](/images/rds.png)
+
+***To be continued in the next project by refactoring these codes into modules.***
