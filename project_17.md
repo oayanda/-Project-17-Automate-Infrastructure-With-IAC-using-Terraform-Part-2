@@ -523,7 +523,7 @@ resource "aws_security_group_rule" "inbound-mysql-webserver" {
 
 ### CREATE CERTIFICATE FROM AMAZON CERIFICATE MANAGER
 
-As required, we need to create certifate and validate it. For this configuration, make sure the Hosted zone is already created.
+As required, we need to create a certifate and validate it. For this configuration, make sure the Hosted zone is already created.
 Create cert.tf file and add the following code snippets to it.
 
 ```bash
