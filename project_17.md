@@ -287,7 +287,9 @@ This is where, we will be attaching the policy which we created above, to the ro
 
  ![variables](/images/role.png)
 
- ## CREATE SECURITY GROUPS
+ ### CREATE SECURITY GROUPS
+
+ `aws_security_group_rule` is used to reference and security group
 
  ```bash
  # security group for alb, to allow acess from any where for HTTP and HTTPS traffic
@@ -511,3 +513,77 @@ resource "aws_security_group_rule" "inbound-mysql-webserver" {
   security_group_id        = aws_security_group.datalayer-sg.id
 }
 ```
+
+### CREATE CERTIFICATE FROM AMAZON CERIFICATE MANAGER
+
+Create cert.tf file and add the following code snippets to it.
+
+```bash
+# The entire section create a certiface, public zone, and validate the certificate using DNS method
+
+# Create the certificate using a wildcard for all the domains created in oyindamola.gq
+resource "aws_acm_certificate" "oayanda" {
+  domain_name       = "*.oayanda.com"
+  validation_method = "DNS"
+}
+
+# calling the hosted zone
+data "aws_route53_zone" "oayanda" {
+  name         = "oayanda.com"
+  private_zone = false
+}
+
+# selecting validation method
+resource "aws_route53_record" "oayanda" {
+  for_each = {
+    for dvo in aws_acm_certificate.oayanda.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.oayanda.zone_id
+}
+
+# validate the certificate through DNS method
+resource "aws_acm_certificate_validation" "oayanda" {
+  certificate_arn         = aws_acm_certificate.oayanda.arn
+  validation_record_fqdns = [for record in aws_route53_record.oayanda : record.fqdn]
+}
+
+# create records for tooling
+resource "aws_route53_record" "tooling" {
+  zone_id = data.aws_route53_zone.oayanda.zone_id
+  name    = "tooling.oayanda.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.ext-alb.dns_name
+    zone_id                = aws_lb.ext-alb.zone_id
+    evaluate_target_health = true
+  }
+}
+
+# create records for wordpress
+resource "aws_route53_record" "wordpress" {
+  zone_id = data.aws_route53_zone.oayanda.zone_id
+  name    = "wordpress.oayanda.com"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.ext-alb.dns_name
+    zone_id                = aws_lb.ext-alb.zone_id
+    evaluate_target_health = true
+  }
+}
+```
+
+### Create an external (Internet facing) Application Load Balancer (ALB)
+
+### CREATING AUSTOALING GROUPS
